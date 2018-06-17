@@ -14,6 +14,10 @@ const appReducer = (state: AppReducerState = INITIAL_STATE, action: Actions): Ap
         case ActionsTypes.AUTHENTICATED:
             return {...state, jwtToken: action.jwtToken, user: action.user};
 
+        case ActionsTypes.LOGOUT: {
+            return {...state, jwtToken: undefined, user: undefined};
+        }
+
         default:
             return state;
     }

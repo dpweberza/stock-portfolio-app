@@ -1,8 +1,6 @@
-import {
-    combineReducers,
-    createStore,
-} from 'redux';
+import {combineReducers, createStore,} from 'redux';
 import {composeWithDevTools} from 'redux-devtools-extension';
+import persistState from 'redux-localstorage';
 
 import appReducer, {AppReducerState} from './reducer';
 
@@ -14,7 +12,13 @@ const rootReducer = combineReducers({
     app: appReducer,
 });
 
-export const configureStore = (initialState?: StoreState) => createStore(rootReducer, initialState || {}, composeWithDevTools());
+const composeEnhancers = composeWithDevTools({
+    // options like actionSanitizer, stateSanitizer
+});
+
+export const configureStore = (initialState?: StoreState) => createStore(rootReducer, initialState || {}, composeEnhancers(
+    persistState() as any,
+));
 
 const defaultStore = configureStore();
 
