@@ -5,6 +5,7 @@
   "dependencies": {
     "bcrypt": "^2.0.1",
     "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "react": "^16.4.1",
@@ -18,19 +19,26 @@
     "start": "react-scripts-ts start",
     "build": "concurrently --kill-others-on-fail \"react-scripts-ts build\" \"tsc -p server\"",
     "dev": "concurrently --kill-others-on-fail \"react-scripts-ts start\" \"tsc -w -p server\"  \"npm run dev-server\"",
-    "dev-server": "concurrently --kill-others-on-fail \"react-scripts-ts start\" \"tsc -w -p server\" \"nodemon dist/server.js\"",
+    "dev-server": "concurrently --kill-others-on-fail \"tsc -w -p server\" \"nodemon --inspect dist/server.js\"",
     "test": "react-scripts-ts test --env=jsdom",
+    "test-server": "jest -c server/jest.config.json",
     "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
     "@types/bcrypt": "^2.0.0",
+    "@types/body-parser": "^1.17.0",
     "@types/express": "^4.16.0",
     "@types/jest": "^23.1.0",
+    "@types/jsonwebtoken": "^7.2.7",
     "@types/node": "^10.3.3",
+    "@types/passport": "^0.4.5",
+    "@types/passport-jwt": "^3.0.1",
     "@types/react": "^16.3.18",
     "@types/react-dom": "^16.0.6",
     "@types/sequelize": "^4.27.21",
     "concurrently": "^3.5.1",
+    "jest": "^23.1.0",
+    "ts-jest": "^22.4.6",
     "typescript": "^2.9.2"
   }
 }

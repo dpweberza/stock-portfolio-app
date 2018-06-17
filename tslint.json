@@ -3,10 +3,13 @@
   "linterOptions": {
     "exclude": [
       "config/**/*.js",
-      "node_modules/**/*.ts"
+      "node_modules/**/*.ts",
+      "server/**/*.ts"
     ]
   },
   "rules": {
-    "no-console": false
+    "no-console": false,
+    "interface-name": false,
+    "object-literal-sort-keys": false
   }
 }
