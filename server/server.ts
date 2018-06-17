@@ -42,7 +42,7 @@ app.post('/login', (async (req, res) => {
     if (user && await comparePassword(password, user.password)) {
         const payload: JwtPayload = {userId: user.id!};
         const token = jwt.sign(payload, jwtOptions.secretOrKey as string);
-        res.json({token});
+        res.json({token, user: {firstName: user.firstName, lastName: user.lastName}});
     } else {
         res.sendStatus(401);
     }
