@@ -4,7 +4,7 @@ import {connect, Dispatch} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {Button, Form, Input} from 'reactstrap';
 import {bindActionCreators} from 'redux';
-import AuthService from '../services/AuthService';
+import UserService from '../services/UserService';
 import {authenticated} from '../store/actions';
 
 interface FormValues {
@@ -59,7 +59,7 @@ class Login extends React.Component<Props> {
     private async onSubmit(values: FormValues, actions: FormikActions<FormValues>) {
         const {onAuth, history} = this.props;
         try {
-            const data = await AuthService.login(values.username, values.password);
+            const data = await UserService.login(values.username, values.password);
             onAuth(data.token, data.user);
             history.push('/');
         } catch (e) {

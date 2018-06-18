@@ -1,5 +1,4 @@
 import * as sequelize from 'sequelize';
-import {hashPassword} from "../auth/hash";
 import db from '../db';
 
 export interface UserAttributes {
@@ -8,6 +7,7 @@ export interface UserAttributes {
     lastName: string,
     username: string;
     password: string;
+    balance: number;
 }
 
 export interface UserMethods {
@@ -33,24 +33,11 @@ const attributes: SequelizeAttributes<UserAttributes> = {
     },
     password: {
         type: sequelize.STRING
-    }
+    },
+    balance: {
+        type: sequelize.DOUBLE
+    },
 };
 const User = db.define<UserInstance, UserAttributes>('user', attributes as any);
-
-User.sync({force: true}).then(async () => {
-    // Table created
-    User.create({
-        firstName: 'John',
-        lastName: 'Doe',
-        username: 'john',
-        password: await hashPassword('secret1'),
-    });
-    User.create({
-        firstName: 'Jane',
-        lastName: 'Doe',
-        username: 'jane',
-        password: await hashPassword('secret2'),
-    });
-});
 
 export default User;

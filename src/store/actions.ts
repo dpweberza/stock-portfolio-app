@@ -1,13 +1,15 @@
-import {User} from '../services/AuthService';
+import {User} from '../services/UserService';
 
 export type Actions =
     DefaultAction
     | AuthenticatedAction
-    | LogoutAction;
+    | LogoutAction
+    | UpdateUserBalanceAction;
 
 export enum ActionsTypes {
     AUTHENTICATED = 'AUTHENTICATED',
     LOGOUT = 'LOGOUT',
+    UPDATE_USER_BALANCE = 'UPDATE_USER_BALANCE',
     DEFAULT_ACTION = '',
 }
 
@@ -39,4 +41,17 @@ export interface LogoutAction {
 
 export const logout = (): LogoutAction => ({
     type: ActionsTypes.LOGOUT,
+});
+
+/**
+ * Updates the authenticated user's balance
+ */
+export interface UpdateUserBalanceAction {
+    type: ActionsTypes.UPDATE_USER_BALANCE;
+    balance: number;
+}
+
+export const updateUserBalance = (balance: number): UpdateUserBalanceAction => ({
+    type: ActionsTypes.UPDATE_USER_BALANCE,
+    balance,
 });

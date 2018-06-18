@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {Redirect, Route, RouteProps} from 'react-router';
-import {User} from '../services/AuthService';
+import {User} from '../services/UserService';
 import {StoreState} from '../store/store';
 
 interface StateProps {

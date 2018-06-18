@@ -13,3 +13,4 @@ https://github.com/wmonk/create-react-app-typescript
 TODO
 migrations
 models to use typescript
+expiration and handling of expired jwts

@@ -1,4 +1,4 @@
-import {User} from '../services/AuthService';
+import {User} from '../services/UserService';
 import {Actions, ActionsTypes} from './actions';
 
 export interface AppReducerState {
@@ -16,6 +16,12 @@ const appReducer = (state: AppReducerState = INITIAL_STATE, action: Actions): Ap
 
         case ActionsTypes.LOGOUT: {
             return {...state, jwtToken: undefined, user: undefined};
+        }
+
+        case ActionsTypes.UPDATE_USER_BALANCE: {
+            const newUser = Object.assign({}, state.user);
+            newUser.balance = action.balance;
+            return {...state, user: newUser};
         }
 
         default:
