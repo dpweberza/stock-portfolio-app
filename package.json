@@ -27,7 +27,7 @@
   },
   "proxy": "http://localhost:8000",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "start": "cross-env NODE_ENV=production node ./dist/server.js",
     "build": "cross-env NODE_ENV=production concurrently --kill-others-on-fail \"react-scripts-ts build\" \"tsc -p server\"",
     "dev": "concurrently --kill-others-on-fail \"react-scripts-ts start\" \"tsc -w -p server\"  \"npm run dev-server\"",
     "dev-client": "react-scripts-ts start",
