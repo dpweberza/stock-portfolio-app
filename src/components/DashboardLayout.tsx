@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {connect, Dispatch} from 'react-redux';
 import {Route, RouteComponentProps, Switch} from 'react-router';
-import {DropdownItem, DropdownToggle, Nav, Navbar, NavbarBrand, NavItem, NavLink, UncontrolledDropdown} from 'reactstrap';
-import DropdownMenu from 'reactstrap/lib/DropdownMenu';
+import {DropdownItem, DropdownMenu, DropdownToggle, Nav, Navbar, NavbarBrand, NavItem, NavLink, UncontrolledDropdown} from 'reactstrap';
 import {bindActionCreators} from 'redux';
 import {User} from '../services/UserService';
 import {logout} from '../store/actions';
@@ -10,6 +9,7 @@ import {StoreState} from '../store/store';
 import BalanceView from './BalanceView';
 import DashboardView from './DashboardView';
 import PurchaseView from './PurchaseView';
+import SellView from './SellView';
 
 interface StateProps {
     user: User;
@@ -55,7 +55,10 @@ class DashboardLayout extends React.Component<Props> {
                                 <NavLink href="/">Dashboard</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink href="/buy">Buy stocks</NavLink>
+                                <NavLink href="/buy">Purchase stocks</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink href="/sell">Sell stocks</NavLink>
                             </NavItem>
                             <NavItem>
                                 <NavLink href="/balance">Manage balance</NavLink>
@@ -65,6 +68,7 @@ class DashboardLayout extends React.Component<Props> {
                             <Switch>
                                 <Route exact={true} path="/" component={DashboardView}/>
                                 <Route exact={true} path="/buy" component={PurchaseView}/>
+                                <Route exact={true} path="/sell" component={SellView}/>
                                 <Route exact={true} path="/balance" component={BalanceView}/>
                             </Switch>
                         </main>

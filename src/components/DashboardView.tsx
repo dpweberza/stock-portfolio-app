@@ -1,10 +1,8 @@
 import * as React from 'react';
-import {connect, Dispatch} from 'react-redux';
+import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {Table} from 'reactstrap';
-import {bindActionCreators} from 'redux';
 import UserService, {Stock, User} from '../services/UserService';
-import {logout} from '../store/actions';
 import {StoreState} from '../store/store';
 
 interface StateProps {
@@ -12,23 +10,17 @@ interface StateProps {
     jwtToken: string;
 }
 
-const actionCreators = {
-    onLogout: logout,
-};
-type DispatchProps = typeof actionCreators;
-
-type Props = StateProps & DispatchProps & RouteComponentProps<{}>;
+type Props = StateProps & RouteComponentProps<{}>;
 
 interface State {
     stocks?: Stock[];
 }
 
-class BuyPage extends React.Component<Props, State> {
+class DashboardView extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
         this.state = {};
-        this.logout = this.logout.bind(this);
     }
 
     public async componentDidMount() {
@@ -107,10 +99,6 @@ class BuyPage extends React.Component<Props, State> {
         );
     }
 
-    private logout() {
-        const {onLogout} = this.props;
-        onLogout();
-    }
 }
 
 //
@@ -121,6 +109,4 @@ const mapStateToProps = (state: StoreState): StateProps => ({
     user: state.app.user!,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators(actionCreators, dispatch);
-
-export default connect<StateProps, DispatchProps, {}>(mapStateToProps, mapDispatchToProps as any)(BuyPage);
+export default connect<StateProps, {}, {}>(mapStateToProps)(DashboardView);

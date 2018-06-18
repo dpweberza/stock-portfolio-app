@@ -126,12 +126,18 @@ class BalanceView extends React.Component<Props, State> {
 
     private async onProcess(values: FormValues, actions: FormikActions<FormValues>) {
         const {jwtToken, onBalanceUpdate} = this.props;
-        const amount = (values.typeId == TransactionType.Withdrawal ? -1 : 1) * values.amount;
-        const data = await UserService.updateUserBalance(jwtToken, amount);
-        this.setState({userBalance: data.balance});
-        onBalanceUpdate(data.balance);
-        actions.setSubmitting(false);
-        actions.resetForm();
+        try {
+            const amount = (values.typeId == TransactionType.Withdrawal ? -1 : 1) * values.amount;
+            const data = await UserService.updateUserBalance(jwtToken, amount);
+            this.setState({userBalance: data.balance});
+            onBalanceUpdate(data.balance);
+            actions.resetForm();
+            alert('Successfully updated balance!');
+        } catch (e) {
+            alert('An unexpected error has occurred, please try again later');
+        } finally {
+            actions.setSubmitting(false);
+        }
     }
 }
 

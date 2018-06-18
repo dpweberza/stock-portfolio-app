@@ -37,6 +37,11 @@ export default class UserService {
         return response.data;
     }
 
+    public static async purchaseStocks(jwtToken: string, symbol: string, count: number): Promise<BalanceResponse> {
+        const response = await axios.post('stocks', {count, symbol}, this.getAuthConfig(jwtToken));
+        return response.data;
+    }
+
     public static async getUserBalance(jwtToken: string): Promise<BalanceResponse> {
         const response = await axios.get('balance', this.getAuthConfig(jwtToken));
         return response.data;

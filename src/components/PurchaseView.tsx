@@ -1,11 +1,11 @@
-import {Field, Formik} from 'formik';
+import {Field, Formik, FormikActions} from 'formik';
 import * as React from 'react';
 import {connect, Dispatch} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {Button, Form, Input} from 'reactstrap';
 import {bindActionCreators} from 'redux';
 import AlphaAdvantageService, {StockQuoteResponse} from '../services/AlphaAdvantageService';
-import {User} from '../services/UserService';
+import UserService from '../services/UserService';
 import {logout} from '../store/actions';
 import {StoreState} from '../store/store';
 
@@ -14,7 +14,7 @@ interface State {
 }
 
 interface StateProps {
-    user: User;
+    jwtToken: string;
 }
 
 const actionCreators = {
@@ -23,6 +23,11 @@ const actionCreators = {
 type DispatchProps = typeof actionCreators;
 
 type Props = StateProps & DispatchProps & RouteComponentProps<{}>;
+
+interface FormValues {
+    quantity: number;
+    symbol: string;
+}
 
 class PurchaseView extends React.Component<Props, State> {
 
@@ -40,7 +45,7 @@ class PurchaseView extends React.Component<Props, State> {
         const form = this.renderForm();
         return (
             <React.Fragment>
-                <h1 className="h2">Buy Stocks</h1>
+                <h1 className="h2">Purchase Stocks</h1>
                 <Form onSubmit={this.onSearchSubmit} className="mb-2">
                     <Input
                         onBlur={this.searchStock}
@@ -66,6 +71,7 @@ class PurchaseView extends React.Component<Props, State> {
             <Formik
                 initialValues={{
                     quantity: 1,
+                    symbol: stock['1. symbol']
                 }}
                 onSubmit={this.onPurchase}
                 render={({handleSubmit, isSubmitting, values}) => (
@@ -122,8 +128,17 @@ class PurchaseView extends React.Component<Props, State> {
         this.searchField = node;
     }
 
-    private async onPurchase() {
-        // TODO
+    private async onPurchase(values: FormValues, actions: FormikActions<FormValues>) {
+        const {jwtToken} = this.props;
+        try {
+            await UserService.purchaseStocks(jwtToken, values.symbol, values.quantity);
+            actions.resetForm();
+            alert('Successfully purchased stocks!');
+        } catch (e) {
+            alert('An unexpected error has occurred, please try again later');
+        } finally {
+            actions.setSubmitting(false);
+        }
     }
 }
 
@@ -131,7 +146,7 @@ class PurchaseView extends React.Component<Props, State> {
 // Redux wiring
 //
 const mapStateToProps = (state: StoreState): StateProps => ({
-    user: state.app.user!,
+    jwtToken: state.app.jwtToken!,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators(actionCreators, dispatch);

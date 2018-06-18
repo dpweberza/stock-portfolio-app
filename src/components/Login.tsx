@@ -64,6 +64,7 @@ class Login extends React.Component<Props> {
             history.push('/');
         } catch (e) {
             alert('Incorrect credentials or server error.');
+        } finally {
             actions.setSubmitting(false);
         }
     }
