@@ -71,7 +71,7 @@ app.post('/stocks', passport.authenticate('jwt', {session: false}), (async (req,
             res.sendStatus(404);
         } else {
             const totalPurchase = price * count;
-            if (updatedUser.balance < totalPurchase) {
+            if (totalPurchase > 0 && updatedUser.balance < totalPurchase) {
                 res.sendStatus(400);
             } else {
                 // Update or create the stock holding
