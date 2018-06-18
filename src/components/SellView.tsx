@@ -1,4 +1,4 @@
-import {Field, Formik, FormikActions} from 'formik';
+import {Field, Formik, FormikActions, validateYupSchema, yupToFormErrors} from 'formik';
 import * as React from 'react';
 import {connect, Dispatch} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
@@ -30,6 +30,7 @@ interface State {
 interface FormValues {
     quantity: number;
     symbol?: string;
+    price?: number;
 }
 
 class SellView extends React.Component<Props, State> {
@@ -43,15 +44,20 @@ class SellView extends React.Component<Props, State> {
 
     public async componentDidMount() {
         const {jwtToken} = this.props;
-        const response = await UserService.getUserStocks(jwtToken);
-        this.setState({stocks: response.stocks});
+
+        try {
+            const response = await UserService.getUserStocks(jwtToken);
+            this.setState({stocks: response.stocks});
+        } catch (e) {
+            alert('Unfortunately we could not retrieve your stock holdings at this time')
+        }
     }
 
     public render() {
         const form = this.renderForm();
         return (
             <React.Fragment>
-                <h1 className="h2">Sell Stocks</h1>
+                <h1 className="h2 border-bottom pb-2">Sell Stocks</h1>
                 {form}
             </React.Fragment>
         );
@@ -68,12 +74,9 @@ class SellView extends React.Component<Props, State> {
             <Formik
                 initialValues={{
                     quantity: 1,
-                    symbol: undefined
+                    symbol: undefined,
+                    price
                 }}
-                validationSchema={Yup.object().shape({
-                    quantity: Yup.number().min(0).required('Please enter in the number of units you wish to sell'),
-                    symbol: Yup.string().required('Please select the stock you wish to sell')
-                })}
                 validate={this.validateForm}
                 onSubmit={this.onSell}
                 render={({handleSubmit, isSubmitting, values, touched, errors, handleChange}) => (
@@ -103,7 +106,12 @@ class SellView extends React.Component<Props, State> {
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label">Unit Price</label>
                             <div className="col-sm-10">
-                                <Input readOnly={true} value={price}/>
+                                <Input readOnly={true} value={price} className={errors.price && 'is-invalid'}/>
+                                {touched.price && errors.price && (
+                                    <div className="invalid-feedback">
+                                        {errors.price}
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <Field
@@ -160,17 +168,33 @@ class SellView extends React.Component<Props, State> {
         }
     }
 
-    private validateForm(values: FormValues) {
-        const {stocks} = this.state;
+    private async validateForm(values: FormValues) {
+        const {stocks, price} = this.state;
 
-        const errors: any = {};
+        let errors: any = {};
+
+        try {
+            const schema = Yup.object().shape({
+                quantity: Yup.number().min(0).required('Please enter in the number of units you wish to sell'),
+                symbol: Yup.string().required('Please select the stock you wish to sell')
+            });
+            await validateYupSchema(values, schema);
+        } catch (e) {
+            errors = Object.assign({}, yupToFormErrors(e), errors);
+        }
 
         const selectedStock = stocks && stocks.find((stock) => stock.symbol === values.symbol);
         if (selectedStock && selectedStock.count < values.quantity) {
             errors.quantity = 'Quantity cannot be greater than current stock holding of: ' + selectedStock.count;
         }
 
-        return errors;
+        if (values.symbol && typeof price === 'undefined') {
+            errors.price = 'Unable to retrieve stock price at this time';
+        }
+
+        if (Object.keys(errors).length) {
+            throw errors
+        }
     }
 }
 

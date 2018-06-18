@@ -4,6 +4,7 @@ import {connect, Dispatch} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {Button, Form, Input} from 'reactstrap';
 import {bindActionCreators} from 'redux';
+import * as Yup from 'yup';
 import UserService, {User} from '../services/UserService';
 import {logout, updateUserBalance} from '../store/actions';
 import {StoreState} from '../store/store';
@@ -53,7 +54,7 @@ class BalanceView extends React.Component<Props, State> {
         const form = this.renderForm();
         return (
             <React.Fragment>
-                <h1 className="h2">Manage My Balance</h1>
+                <h1 className="h2 border-bottom pb-2">Manage My Balance</h1>
                 {form}
             </React.Fragment>
         );
@@ -71,8 +72,12 @@ class BalanceView extends React.Component<Props, State> {
                     amount: 0,
                     typeId: undefined,
                 }}
+                validationSchema={Yup.object().shape({
+                    amount: Yup.number().min(0.01).required('Please enter in the amount'),
+                    typeId: Yup.string().required('Please select a transaction type')
+                })}
                 onSubmit={this.onProcess}
-                render={({handleSubmit, isSubmitting, values}) => (
+                render={({handleSubmit, isSubmitting, values, touched, errors}) => (
                     <Form onSubmit={handleSubmit}>
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label">Current Balance</label>
@@ -86,11 +91,16 @@ class BalanceView extends React.Component<Props, State> {
                                 <div className="form-group row">
                                     <label className="col-sm-2 col-form-label">Transaction Type</label>
                                     <div className="col-sm-10">
-                                        <Input type="select" {...field}>
+                                        <Input type="select" {...field} className={errors.typeId && 'is-invalid'}>
                                             <option>Please Select</option>
                                             <option value={TransactionType.Deposit}>Deposit</option>
                                             <option value={TransactionType.Withdrawal}>Withdrawal</option>
                                         </Input>
+                                        {touched.typeId && errors.typeId && (
+                                            <div className="invalid-feedback">
+                                                {errors.typeId}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )}
@@ -101,7 +111,12 @@ class BalanceView extends React.Component<Props, State> {
                                 <div className="form-group row">
                                     <label className="col-sm-2 col-form-label">Amount</label>
                                     <div className="col-sm-10">
-                                        <Input {...field} />
+                                        <Input {...field} className={errors.amount && 'is-invalid'} />
+                                        {touched.amount && errors.amount && (
+                                            <div className="invalid-feedback">
+                                                {errors.amount}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )}

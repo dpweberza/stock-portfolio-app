@@ -67,22 +67,26 @@ app.get('/stocks', passport.authenticate('jwt', {session: false}), (async (req, 
 app.post('/stocks', passport.authenticate('jwt', {session: false}), (async (req, res) => {
     const user = req.user;
     const {count, symbol} = req.body;
-    if (user && symbol) {
-        let stock = await Stock.find({where: {userId: user.id, symbol}});
-        if (!stock) {
-            stock = await Stock.create({userId: user.id, symbol, count});
+    if (user) {
+        if (!symbol) {
+            res.sendStatus(400);
         } else {
-            stock.count += count;
-            await stock.save();
-        }
+            let stock = await Stock.find({where: {userId: user.id, symbol}});
+            if (!stock) {
+                stock = await Stock.create({userId: user.id, symbol, count});
+            } else {
+                stock.count += count;
+                await stock.save();
+            }
 
-        const stocks = await Stock.findAll({where: {userId: user.id}});
-        res.json({
-            stocks: stocks.map((aStock) => ({
-                symbol: aStock.symbol,
-                count: aStock.count
-            }))
-        });
+            const stocks = await Stock.findAll({where: {userId: user.id}});
+            res.json({
+                stocks: stocks.map((aStock) => ({
+                    symbol: aStock.symbol,
+                    count: aStock.count
+                }))
+            });
+        }
     } else {
         res.sendStatus(401);
     }

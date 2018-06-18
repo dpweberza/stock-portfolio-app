@@ -39,13 +39,14 @@ class PurchaseView extends React.Component<Props, State> {
         this.searchStock = this.searchStock.bind(this);
         this.onSearchSubmit = this.onSearchSubmit.bind(this);
         this.bindSearchField = this.bindSearchField.bind(this);
+        this.onPurchase = this.onPurchase.bind(this);
     }
 
     public render() {
         const form = this.renderForm();
         return (
             <React.Fragment>
-                <h1 className="h2">Purchase Stocks</h1>
+                <h1 className="h2 border-bottom pb-2">Purchase Stocks</h1>
                 <Form onSubmit={this.onSearchSubmit} className="mb-2">
                     <Input
                         onBlur={this.searchStock}

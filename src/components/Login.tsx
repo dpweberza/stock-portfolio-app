@@ -2,8 +2,9 @@ import {Field, Formik, FormikActions} from 'formik';
 import * as React from 'react';
 import {connect, Dispatch} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
-import {Button, Form, Input} from 'reactstrap';
+import {Button, Form, FormGroup, Input, Jumbotron} from 'reactstrap';
 import {bindActionCreators} from 'redux';
+import * as Yup from 'yup';
 import UserService from '../services/UserService';
 import {authenticated} from '../store/actions';
 
@@ -33,24 +34,56 @@ class Login extends React.Component<Props> {
                     username: '',
                     password: '',
                 }}
+                validationSchema={Yup.object().shape({
+                    username: Yup.string().required('Please enter in your username'),
+                    password: Yup.string().required('Please enter in your password')
+                })}
                 onSubmit={this.onSubmit}
-                render={({handleSubmit, isSubmitting}) => (
-                    <Form className="form-signin" onSubmit={handleSubmit}>
-                        <h1 className="h3 mb-3 font-weight-normal">Welcome, please login</h1>
-                        <Field
-                            name="username"
-                            render={({field}) => (
-                                <Input {...field} placeholder="Username"/>
-                            )}
-                        />
-                        <Field
-                            name="password"
-                            render={({field}) => (
-                                <Input {...field} placeholder="Password"/>
-                            )}
-                        />
-                        <Button className="btn btn-lg btn-primary btn-block" disabled={isSubmitting}>Login</Button>
-                    </Form>
+                render={({handleSubmit, isSubmitting, touched, errors}) => (
+                    <div className="container pt-2">
+                        <Jumbotron>
+                            <h1 className="display-4">My Stock Portfolio</h1>
+                            <p className="lead">Your trusty stock tracking tool!</p>
+                        </Jumbotron>
+                        <Form className="form-signin" onSubmit={handleSubmit}>
+                            <h1 className="h3 mb-3 font-weight-normal">Welcome, please login</h1>
+                            <Field
+                                name="username"
+                                render={({field}) => (
+                                    <FormGroup>
+                                        <Input
+                                            {...field}
+                                            placeholder="Username"
+                                            className={errors.username ? 'form-control mb-2 is-invalid' : 'form-control mb-2'}
+                                        />
+                                        {touched.username && errors.username && (
+                                            <div className="invalid-feedback">
+                                                {errors.username}
+                                            </div>
+                                        )}
+                                    </FormGroup>
+                                )}
+                            />
+                            <Field
+                                name="password"
+                                render={({field}) => (
+                                    <FormGroup>
+                                        <Input
+                                            {...field}
+                                            placeholder="Password"
+                                            className={errors.username ? 'form-control mb-2 is-invalid' : 'form-control mb-2'}
+                                        />
+                                        {touched.password && errors.password && (
+                                            <div className="invalid-feedback">
+                                                {errors.password}
+                                            </div>
+                                        )}
+                                    </FormGroup>
+                                )}
+                            />
+                            <Button className="btn btn-lg btn-primary btn-block" disabled={isSubmitting}>Login</Button>
+                        </Form>
+                    </div>
                 )}
             />
         );
