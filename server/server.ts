@@ -27,7 +27,7 @@ app.set('port', process.env.PORT || 8000);
 
 // Express only serves static assets in production
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '..', 'build', 'static')));
+    app.use(express.static(path.resolve(__dirname, '../build')));
 }
 
 //
@@ -122,6 +122,14 @@ app.post('/balance', passport.authenticate('jwt', {session: false}), (async (req
     }
 }));
 
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+if (process.env.NODE_ENV === 'production') {
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname + '/../build/index.html'));
+    });
+}
+
 //
 // Seed the db
 //
@@ -132,5 +140,5 @@ seed();
 //
 const server = http.createServer(app);
 server.listen(app.get('port'), () => {
-    console.log('express listening on port ' + app.get('port'))
+    console.log('express listening on port ' + app.get('port') + ', env: ' + process.env.NODE_ENV)
 });

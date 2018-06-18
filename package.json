@@ -27,13 +27,15 @@
   },
   "proxy": "http://localhost:8000",
   "scripts": {
-    "build": "concurrently --kill-others-on-fail \"react-scripts-ts build\" \"tsc -p server\"",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "build": "cross-env NODE_ENV=production concurrently --kill-others-on-fail \"react-scripts-ts build\" \"tsc -p server\"",
     "dev": "concurrently --kill-others-on-fail \"react-scripts-ts start\" \"tsc -w -p server\"  \"npm run dev-server\"",
     "dev-client": "react-scripts-ts start",
     "dev-server": "concurrently --kill-others-on-fail \"tsc -w -p server\" \"nodemon --inspect dist/server.js\"",
     "test": "react-scripts-ts test --env=jsdom",
     "test-server": "jest -c server/jest.config.json",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "heroku-postbuild": "npm run build"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
@@ -58,8 +60,12 @@
     "@types/sequelize": "^4.27.21",
     "@types/yup": "^0.24.6",
     "concurrently": "^3.5.1",
+    "cross-env": "^5.2.0",
     "jest": "^23.1.0",
     "ts-jest": "^22.4.6",
     "typescript": "^2.9.2"
+  },
+  "engines": {
+    "node": "6.11.0"
   }
 }
