@@ -2,7 +2,7 @@
 A simple stock tracking app built as part of a coding challenge.
 
 ## Live Demo
-Coming soon..
+https://my-stock-portfolio.herokuapp.com/login
 
 ### Login Credentials
 
