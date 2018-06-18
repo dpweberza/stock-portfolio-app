@@ -50,80 +50,75 @@ app.post('/login', (async (req, res) => {
 }));
 
 app.get('/stocks', passport.authenticate('jwt', {session: false}), (async (req, res) => {
-    const user = req.user;
-    if (user) {
-        const stocks = await Stock.findAll({where: {userId: user.id}});
-        res.json({
-            stocks: stocks.map((stock) => ({
-                symbol: stock.symbol,
-                count: stock.count
-            }))
-        });
-    } else {
-        res.sendStatus(401);
-    }
+    const user = req.user!;
+    const stocks = await Stock.findAll({where: {userId: user.id}});
+    res.json({
+        stocks: stocks.map((stock) => ({
+            symbol: stock.symbol,
+            count: stock.count
+        }))
+    });
 }));
 
 app.post('/stocks', passport.authenticate('jwt', {session: false}), (async (req, res) => {
-    const user = req.user;
-    const {count, symbol} = req.body;
-    if (user) {
-        if (!symbol) {
-            res.sendStatus(400);
-        } else {
-            let stock = await Stock.find({where: {userId: user.id, symbol}});
-            if (!stock) {
-                stock = await Stock.create({userId: user.id, symbol, count});
-            } else {
-                stock.count += count;
-                await stock.save();
-            }
-
-            const stocks = await Stock.findAll({where: {userId: user.id}});
-            res.json({
-                stocks: stocks.map((aStock) => ({
-                    symbol: aStock.symbol,
-                    count: aStock.count
-                }))
-            });
-        }
+    const user = req.user!;
+    const {count, symbol, price} = req.body;
+    if (!symbol || !price) {
+        res.sendStatus(400);
     } else {
-        res.sendStatus(401);
+        const updatedUser = await User.findById(user.id);
+        if (!updatedUser) {
+            res.sendStatus(404);
+        } else {
+            const totalPurchase = price * count;
+            if (updatedUser.balance < totalPurchase) {
+                res.sendStatus(400);
+            } else {
+                // Update or create the stock holding
+                let stock = await Stock.find({where: {userId: user.id, symbol}});
+                if (!stock) {
+                    stock = await Stock.create({userId: user.id, symbol, count});
+                } else {
+                    stock.count += count;
+                    await stock.save();
+                }
+
+                // Update the user's cash balance
+                if (updatedUser) {
+                    updatedUser.balance -= totalPurchase;
+                    await updatedUser.save();
+                }
+
+                res.json({balance: updatedUser.balance});
+            }
+        }
     }
 }));
 
 app.get('/balance', passport.authenticate('jwt', {session: false}), (async (req, res) => {
-    const user = req.user;
-    if (user) {
-        const updatedUser = await User.findById(user.id);
-        if (updatedUser) {
-            res.json({
-                balance: updatedUser.balance,
-            });
-        } else {
-            res.sendStatus(400);
-        }
+    const user = req.user!;
+    const updatedUser = await User.findById(user.id);
+    if (updatedUser) {
+        res.json({
+            balance: updatedUser.balance,
+        });
     } else {
-        res.sendStatus(401);
+        res.sendStatus(404);
     }
 }));
 
 app.post('/balance', passport.authenticate('jwt', {session: false}), (async (req, res) => {
-    const user = req.user;
+    const user = req.user!;
     const {amount} = req.body;
-    if (user) {
-        const updatedUser = await User.findById(user.id);
-        if (updatedUser) {
-            updatedUser.balance += amount;
-            await updatedUser.save();
-            res.json({
-                balance: updatedUser.balance,
-            });
-        } else {
-            res.sendStatus(400);
-        }
+    const updatedUser = await User.findById(user.id);
+    if (updatedUser) {
+        updatedUser.balance += amount;
+        await updatedUser.save();
+        res.json({
+            balance: updatedUser.balance,
+        });
     } else {
-        res.sendStatus(401);
+        res.sendStatus(404);
     }
 }));
 

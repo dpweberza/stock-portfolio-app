@@ -82,7 +82,7 @@ class BalanceView extends React.Component<Props, State> {
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label">Current Balance</label>
                             <div className="col-sm-10">
-                                <Input readOnly={true} value={userBalance}/>
+                                <Input readOnly={true} value={userBalance.toFixed(2)}/>
                             </div>
                         </div>
                         <Field
@@ -126,7 +126,7 @@ class BalanceView extends React.Component<Props, State> {
                             <div className="col-sm-10">
                                 <Input
                                     readOnly={true}
-                                    value={Math.max(userBalance + ((values.typeId == TransactionType.Withdrawal ? -1 : 1) * values.amount), 0)}
+                                    value={Math.max(userBalance + ((values.typeId == TransactionType.Withdrawal ? -1 : 1) * values.amount), 0).toFixed(2)}
                                 />
                             </div>
                         </div>

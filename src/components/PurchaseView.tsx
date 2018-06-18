@@ -6,7 +6,7 @@ import {Button, Form, Input} from 'reactstrap';
 import {bindActionCreators} from 'redux';
 import AlphaAdvantageService, {StockQuoteResponse} from '../services/AlphaAdvantageService';
 import UserService from '../services/UserService';
-import {logout} from '../store/actions';
+import {logout, updateUserBalance} from '../store/actions';
 import {StoreState} from '../store/store';
 
 interface State {
@@ -19,6 +19,7 @@ interface StateProps {
 
 const actionCreators = {
     onLogout: logout,
+    onBalanceUpdate: updateUserBalance,
 };
 type DispatchProps = typeof actionCreators;
 
@@ -130,9 +131,12 @@ class PurchaseView extends React.Component<Props, State> {
     }
 
     private async onPurchase(values: FormValues, actions: FormikActions<FormValues>) {
-        const {jwtToken} = this.props;
+        const {jwtToken, onBalanceUpdate} = this.props;
+        const {stockData} = this.state;
         try {
-            await UserService.purchaseStocks(jwtToken, values.symbol, values.quantity);
+            const stock = stockData!['Stock Quotes'][0];
+            const updateData = await UserService.purchaseStocks(jwtToken, values.symbol, values.quantity, parseFloat(stock['2. price']));
+            onBalanceUpdate(updateData.balance);
             actions.resetForm();
             alert('Successfully purchased stocks!');
         } catch (e) {

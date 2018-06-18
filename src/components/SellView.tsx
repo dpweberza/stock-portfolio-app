@@ -7,7 +7,7 @@ import {bindActionCreators} from 'redux';
 import * as Yup from 'yup';
 import AlphaAdvantageService from '../services/AlphaAdvantageService';
 import UserService, {Stock, User} from '../services/UserService';
-import {logout} from '../store/actions';
+import {logout, updateUserBalance} from '../store/actions';
 import {StoreState} from '../store/store';
 
 interface StateProps {
@@ -17,6 +17,7 @@ interface StateProps {
 
 const actionCreators = {
     onLogout: logout,
+    onBalanceUpdate: updateUserBalance,
 };
 type DispatchProps = typeof actionCreators;
 
@@ -146,9 +147,11 @@ class SellView extends React.Component<Props, State> {
     }
 
     private async onSell(values: FormValues, actions: FormikActions<FormValues>) {
-        const {jwtToken} = this.props;
+        const {jwtToken, onBalanceUpdate} = this.props;
+        const {price} = this.state;
         try {
-            await UserService.purchaseStocks(jwtToken, values.symbol!, values.quantity);
+            const updateData = await UserService.purchaseStocks(jwtToken, values.symbol!, -values.quantity, price!);
+            onBalanceUpdate(updateData.balance);
             actions.resetForm();
             alert('Successfully sold stocks!');
         } catch (e) {

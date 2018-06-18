@@ -71,7 +71,7 @@ class DashboardView extends React.Component<Props, State> {
                     My Cash Balance
                 </div>
                 <div className="card-body">
-                    Your current balance is: {user.balance}
+                    Your current balance is: {user.balance.toFixed(2)}
                 </div>
             </div>
         );
