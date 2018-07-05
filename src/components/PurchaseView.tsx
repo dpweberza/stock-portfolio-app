@@ -1,9 +1,9 @@
 import {Field, Formik, FormikActions} from 'formik';
 import * as React from 'react';
-import {connect, Dispatch} from 'react-redux';
+import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {Button, Form, Input} from 'reactstrap';
-import {bindActionCreators} from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import AlphaAdvantageService, {StockQuoteResponse} from '../services/AlphaAdvantageService';
 import UserService from '../services/UserService';
 import {logout, updateUserBalance} from '../store/actions';

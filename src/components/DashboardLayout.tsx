@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {connect, Dispatch} from 'react-redux';
+import {connect} from 'react-redux';
 import {Route, RouteComponentProps, Switch} from 'react-router';
 import {DropdownItem, DropdownMenu, DropdownToggle, Nav, Navbar, NavbarBrand, NavItem, NavLink, UncontrolledDropdown} from 'reactstrap';
-import {bindActionCreators} from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import {User} from '../services/UserService';
 import {logout} from '../store/actions';
 import {StoreState} from '../store/store';

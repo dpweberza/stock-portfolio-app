@@ -1,9 +1,9 @@
 import {Field, Formik, FormikActions, validateYupSchema, yupToFormErrors} from 'formik';
 import * as React from 'react';
-import {connect, Dispatch} from 'react-redux';
+import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {Button, Form, Input} from 'reactstrap';
-import {bindActionCreators} from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import * as Yup from 'yup';
 import AlphaAdvantageService from '../services/AlphaAdvantageService';
 import UserService, {Stock, User} from '../services/UserService';
